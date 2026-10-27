@@ -1,0 +1,15 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="dashboard-wrapper">
+    <partial name="_AdminSidebar" />
+
+    <div class="dashboard-content">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

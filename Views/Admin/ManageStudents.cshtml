@@ -1,0 +1,71 @@
+@model ManageStudentsViewModel
+@{
+    ViewData["Title"] = "Manage Students";
+}
+
+<div class="page-header mb-4">
+    <h3 class="mb-1">Manage Students</h3>
+    <p class="text-muted mb-0">All registered students.</p>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" asp-action="ManageStudents" class="row g-2">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" value="@Model.Search" class="form-control"
+                           placeholder="Search by name, email or department" />
+                </div>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel me-1"></i>Search</button>
+                <a asp-action="ManageStudents" class="btn btn-outline-secondary flex-fill">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card table-card">
+    @if (!Model.Students.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-people"></i>
+            <p class="mb-0">@(string.IsNullOrWhiteSpace(Model.Search) ? "No students have registered yet." : "No students match your search.")</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Registered On</th>
+                        <th class="text-center">Complaints</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var n = 1; }
+                    @foreach (var s in Model.Students)
+                    {
+                        <tr>
+                            <td>@(n++)</td>
+                            <td class="fw-semibold">@s.FullName</td>
+                            <td>@s.Email</td>
+                            <td>@s.Department</td>
+                            <td>@s.RegisteredAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                            <td class="text-center"><span class="badge bg-primary rounded-pill">@s.ComplaintCount</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white small text-muted">
+            Total: @Model.Students.Count student(s)
+        </div>
+    }
+</div>

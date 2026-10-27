@@ -1,0 +1,99 @@
+@model MyComplaintsViewModel
+@{
+    ViewData["Title"] = "My Complaints";
+    var filtersActive = !string.IsNullOrWhiteSpace(Model.Search) || Model.Status.HasValue;
+}
+
+<div class="page-header d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h3 class="mb-1">My Complaints</h3>
+        <p class="text-muted mb-0">Track the status of everything you have submitted.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">
+        <i class="bi bi-plus-circle me-2"></i>Submit New Complaint
+    </a>
+</div>
+
+<!-- Search and filter -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" asp-action="MyComplaints" class="row g-2 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label small mb-1">Search</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" value="@Model.Search" class="form-control"
+                           placeholder="Tracking number or title" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="Pending" selected="@(Model.Status == ComplaintStatus.Pending)">Pending</option>
+                    <option value="InProgress" selected="@(Model.Status == ComplaintStatus.InProgress)">In Progress</option>
+                    <option value="Resolved" selected="@(Model.Status == ComplaintStatus.Resolved)">Resolved</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel me-1"></i>Filter</button>
+                <a asp-action="MyComplaints" class="btn btn-outline-secondary flex-fill">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card table-card">
+    @if (!Model.Complaints.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            @if (filtersActive)
+            {
+                <p class="mb-0">No complaints match your search or filter.</p>
+            }
+            else
+            {
+                <p class="mb-2">You haven't submitted any complaints yet.</p>
+                <a class="btn btn-primary btn-sm" asp-action="Create">Submit your first complaint</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Tracking No.</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Complaints)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@c.TrackingNumber</td>
+                            <td>@c.Title</td>
+                            <td>@c.Category</td>
+                            <td>@c.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                            <td><partial name="_StatusBadge" model="c.Status" /></td>
+                            <td class="text-end">
+                                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@c.ComplaintId">
+                                    <i class="bi bi-eye me-1"></i>View Details
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white small text-muted">
+            Showing @Model.Complaints.Count complaint(s)
+        </div>
+    }
+</div>

@@ -1,0 +1,30 @@
+## Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+publish/
+
+## Visual Studio / VS Code / Rider
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+## Secrets and local configuration (never commit real credentials)
+secrets.json
+appsettings.Local.json
+appsettings.Production.json
+.env
+*.pfx
+
+## Misc
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+*.zip

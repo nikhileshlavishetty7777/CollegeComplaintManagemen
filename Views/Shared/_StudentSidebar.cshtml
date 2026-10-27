@@ -1,0 +1,31 @@
+@{
+    var current = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<aside class="sidebar">
+    <div class="sidebar-title">Student Menu</div>
+    <nav class="nav flex-column">
+        <a class="nav-link @(current == "Dashboard" ? "active" : "")"
+           asp-controller="Complaints" asp-action="Dashboard">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a class="nav-link @(current == "Create" ? "active" : "")"
+           asp-controller="Complaints" asp-action="Create">
+            <i class="bi bi-pencil-square"></i> Submit Complaint
+        </a>
+        <a class="nav-link @(current is "MyComplaints" or "Details" ? "active" : "")"
+           asp-controller="Complaints" asp-action="MyComplaints">
+            <i class="bi bi-list-check"></i> My Complaints
+        </a>
+        <a class="nav-link @(current == "Profile" ? "active" : "")"
+           asp-controller="Complaints" asp-action="Profile">
+            <i class="bi bi-person-circle"></i> My Profile
+        </a>
+
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="nav-link logout-btn">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </form>
+    </nav>
+</aside>

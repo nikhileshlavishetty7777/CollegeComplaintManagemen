@@ -1,0 +1,11 @@
+@model ComplaintStatus
+@{
+    var (css, label, icon) = Model switch
+    {
+        ComplaintStatus.Pending    => ("badge-pending",  "Pending",     "bi-hourglass-split"),
+        ComplaintStatus.InProgress => ("badge-progress", "In Progress", "bi-arrow-repeat"),
+        ComplaintStatus.Resolved   => ("badge-resolved", "Resolved",    "bi-check-circle"),
+        _                          => ("bg-secondary",   "Unknown",     "bi-question-circle")
+    };
+}
+<span class="badge badge-status @css"><i class="bi @icon me-1"></i>@label</span>

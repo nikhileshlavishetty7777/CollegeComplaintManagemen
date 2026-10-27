@@ -1,0 +1,45 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+    var initial = string.IsNullOrWhiteSpace(Model.FullName) ? "?" : Model.FullName.Trim()[0].ToString().ToUpper();
+}
+
+<div class="page-header mb-4">
+    <h3 class="mb-1">My Profile</h3>
+    <p class="text-muted mb-0">Your account information.</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="avatar-circle">@initial</div>
+                    <div>
+                        <h5 class="mb-0">@Model.FullName</h5>
+                        <span class="badge bg-primary">Student</span>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="detail-label">Email</div>
+                        <div>@Model.Email</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">Department</div>
+                        <div>@Model.Department</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">Registered On</div>
+                        <div>@Model.RegisteredAt.ToLocalTime().ToString("dd MMM yyyy")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">Total Complaints Submitted</div>
+                        <div>@Model.TotalComplaints</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

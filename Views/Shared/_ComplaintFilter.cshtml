@@ -1,0 +1,42 @@
+@model ComplaintFilterViewModel
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" asp-controller="Admin" asp-action="@action" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small mb-1">Search</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" value="@Model.Search" class="form-control"
+                           placeholder="Tracking number or title" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="Pending" selected="@(Model.Status == ComplaintStatus.Pending)">Pending</option>
+                    <option value="InProgress" selected="@(Model.Status == ComplaintStatus.InProgress)">In Progress</option>
+                    <option value="Resolved" selected="@(Model.Status == ComplaintStatus.Resolved)">Resolved</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Category</label>
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    @foreach (var cat in ComplaintCategories.All)
+                    {
+                        <option value="@cat" selected="@(Model.Category == cat)">@cat</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i></button>
+                <a asp-controller="Admin" asp-action="@action" class="btn btn-outline-secondary flex-fill">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>

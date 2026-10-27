@@ -1,0 +1,27 @@
+@{
+    var current = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<aside class="sidebar">
+    <div class="sidebar-title">Admin Menu</div>
+    <nav class="nav flex-column">
+        <a class="nav-link @(current == "Dashboard" ? "active" : "")"
+           asp-controller="Admin" asp-action="Dashboard">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a class="nav-link @(current is "ManageComplaints" or "Details" or "UpdateComplaint" ? "active" : "")"
+           asp-controller="Admin" asp-action="ManageComplaints">
+            <i class="bi bi-clipboard-data"></i> Manage Complaints
+        </a>
+        <a class="nav-link @(current == "ManageStudents" ? "active" : "")"
+           asp-controller="Admin" asp-action="ManageStudents">
+            <i class="bi bi-people"></i> Manage Students
+        </a>
+
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="nav-link logout-btn">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </form>
+    </nav>
+</aside>

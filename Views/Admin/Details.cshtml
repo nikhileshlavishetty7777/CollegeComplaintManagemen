@@ -1,0 +1,103 @@
+@model AdminComplaintDetailsViewModel
+@{
+    ViewData["Title"] = "Complaint Details";
+    var c = Model.Complaint!;
+}
+
+<div class="page-header mb-4">
+    <h3 class="mb-1">Complaint Details</h3>
+    <p class="text-muted mb-0">Tracking number <strong>@c.TrackingNumber</strong></p>
+</div>
+
+<div class="row g-4">
+    <!-- Complaint -->
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="mb-0">@c.Title</h5>
+                <partial name="_StatusBadge" model="c.Status" />
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="detail-label">Category</div>
+                        <div>@c.Category</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="detail-label">Submitted On</div>
+                        <div>@c.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="detail-label">Last Updated</div>
+                        <div>@c.UpdatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</div>
+                    </div>
+                </div>
+
+                <div class="detail-label">Description</div>
+                <div class="description-box">@c.Description</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <!-- Student -->
+        <div class="card mb-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-person-badge me-2 text-primary"></i>Submitted By</h6>
+                <div class="detail-label">Name</div>
+                <div class="mb-2">@(c.User?.FullName ?? "Unknown")</div>
+                <div class="detail-label">Email</div>
+                <div class="mb-2">@(c.User?.Email ?? "-")</div>
+                <div class="detail-label">Department</div>
+                <div>@(c.User?.Department ?? "-")</div>
+            </div>
+        </div>
+
+        <!-- Update form -->
+        <div class="card">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-gear me-2 text-primary"></i>Update Complaint</h6>
+
+                <form asp-action="UpdateComplaint" method="post" novalidate>
+                    <input type="hidden" asp-for="ComplaintId" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label">Status</label>
+                        <select asp-for="Status" class="form-select"
+                                asp-items="@Html.GetEnumSelectList<ComplaintStatus>()"></select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AdminRemarks" class="form-label"></label>
+                        <textarea asp-for="AdminRemarks" class="form-control" rows="4" maxlength="1000"
+                                  placeholder="Write a note for the student..."></textarea>
+                        <span asp-validation-for="AdminRemarks" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check2-circle me-2"></i>Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary" asp-action="ManageComplaints">
+        <i class="bi bi-arrow-left me-2"></i>Back to Manage Complaints
+    </a>
+    <button type="button" class="btn btn-outline-danger"
+            data-bs-toggle="modal" data-bs-target="#deleteModal"
+            data-id="@c.ComplaintId" data-tracking="@c.TrackingNumber">
+        <i class="bi bi-trash me-2"></i>Delete Complaint
+    </button>
+</div>
+
+<partial name="_DeleteComplaintModal" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

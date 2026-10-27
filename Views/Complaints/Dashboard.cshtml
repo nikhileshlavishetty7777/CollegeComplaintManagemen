@@ -1,0 +1,113 @@
+@model StudentDashboardViewModel
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="page-header d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h3 class="mb-1">Welcome, @Model.FullName</h3>
+        <p class="text-muted mb-0">Here is a summary of your complaints.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">
+        <i class="bi bi-plus-circle me-2"></i>Submit New Complaint
+    </a>
+</div>
+
+<!-- Statistic cards (values come from the database) -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card stat-total h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-collection"></i></div>
+                <div>
+                    <div class="stat-value">@Model.Total</div>
+                    <div class="text-muted small">Total Complaints</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card stat-pending h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                <div>
+                    <div class="stat-value">@Model.Pending</div>
+                    <div class="text-muted small">Pending</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card stat-progress h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-arrow-repeat"></i></div>
+                <div>
+                    <div class="stat-value">@Model.InProgress</div>
+                    <div class="text-muted small">In Progress</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card stat-resolved h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                <div>
+                    <div class="stat-value">@Model.Resolved</div>
+                    <div class="text-muted small">Resolved</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent complaints -->
+<div class="card table-card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Complaints</h5>
+        <a asp-action="MyComplaints" class="small">View all</a>
+    </div>
+
+    @if (!Model.Recent.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p class="mb-2">You haven't submitted any complaints yet.</p>
+            <a class="btn btn-primary btn-sm" asp-action="Create">Submit your first complaint</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Tracking No.</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Recent)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@c.TrackingNumber</td>
+                            <td>@c.Title</td>
+                            <td>@c.Category</td>
+                            <td>@c.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                            <td><partial name="_StatusBadge" model="c.Status" /></td>
+                            <td class="text-end">
+                                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@c.ComplaintId">
+                                    <i class="bi bi-eye me-1"></i>View
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

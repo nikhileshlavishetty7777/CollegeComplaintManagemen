@@ -1,0 +1,67 @@
+@model ManageComplaintsViewModel
+@{
+    ViewData["Title"] = "Manage Complaints";
+}
+
+<div class="page-header mb-4">
+    <h3 class="mb-1">Manage Complaints</h3>
+    <p class="text-muted mb-0">View, update and delete complaints submitted by students.</p>
+</div>
+
+<partial name="_ComplaintFilter" model="Model" />
+
+<div class="card table-card">
+    @if (!Model.Complaints.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p class="mb-0">@(Model.HasFilters ? "No complaints match your search or filters." : "No complaints have been submitted yet.")</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Tracking No.</th>
+                        <th>Student</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Complaints)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@c.TrackingNumber</td>
+                            <td>@(c.User?.FullName ?? "Unknown")</td>
+                            <td><span class="cell-title text-truncate d-inline-block">@c.Title</span></td>
+                            <td>@c.Category</td>
+                            <td>@c.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                            <td><partial name="_StatusBadge" model="c.Status" /></td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@c.ComplaintId">
+                                    <i class="bi bi-pencil-square me-1"></i>View / Update
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        data-id="@c.ComplaintId" data-tracking="@c.TrackingNumber">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white small text-muted">
+            Showing @Model.Complaints.Count complaint(s)
+        </div>
+    }
+</div>
+
+<partial name="_DeleteComplaintModal" />

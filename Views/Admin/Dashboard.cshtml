@@ -1,0 +1,126 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="page-header d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h3 class="mb-1">Admin Dashboard</h3>
+        <p class="text-muted mb-0">Overview of all students and complaints.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="ManageComplaints">
+        <i class="bi bi-clipboard-data me-2"></i>Manage Complaints
+    </a>
+</div>
+
+<!-- Statistic cards (all values calculated from the database) -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-3 mb-4">
+    <div class="col">
+        <div class="card stat-card stat-students h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="stat-value">@Model.TotalStudents</div>
+                    <div class="text-muted small">Total Students</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card stat-card stat-total h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-collection"></i></div>
+                <div>
+                    <div class="stat-value">@Model.Total</div>
+                    <div class="text-muted small">Total Complaints</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card stat-card stat-pending h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                <div>
+                    <div class="stat-value">@Model.Pending</div>
+                    <div class="text-muted small">Pending</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card stat-card stat-progress h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-arrow-repeat"></i></div>
+                <div>
+                    <div class="stat-value">@Model.InProgress</div>
+                    <div class="text-muted small">In Progress</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card stat-card stat-resolved h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                <div>
+                    <div class="stat-value">@Model.Resolved</div>
+                    <div class="text-muted small">Resolved</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_ComplaintFilter" model="Model" />
+
+<div class="card table-card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Complaints</h5>
+        <a asp-action="ManageComplaints" class="small">View all</a>
+    </div>
+
+    @if (!Model.Recent.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p class="mb-0">@(Model.HasFilters ? "No complaints match your search or filters." : "No complaints have been submitted yet.")</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Tracking No.</th>
+                        <th>Student</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Recent)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@c.TrackingNumber</td>
+                            <td>@(c.User?.FullName ?? "Unknown")</td>
+                            <td><span class="cell-title text-truncate d-inline-block">@c.Title</span></td>
+                            <td>@c.Category</td>
+                            <td>@c.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                            <td><partial name="_StatusBadge" model="c.Status" /></td>
+                            <td class="text-end">
+                                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@c.ComplaintId">
+                                    <i class="bi bi-eye me-1"></i>View
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
